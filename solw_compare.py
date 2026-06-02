@@ -9,7 +9,7 @@ Re-uses the one-pass parser from solw_viewer.py.
 
 from __future__ import annotations
 
-import os
+import os 
 import re
 import subprocess
 import tkinter as tk
@@ -20,7 +20,7 @@ from PIL import Image, ImageTk
 from solw_viewer import load_solw, Solution, categorize
 
 
-IMG_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".gif")
+IMG_EXTS = (".jpg")
 
 
 def _looks_like_image_path(text: str) -> bool:
