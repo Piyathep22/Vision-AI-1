@@ -1,0 +1,371 @@
+=== PAGE 347 ===
+Table 13-2 Product Count Example
+Result image Count data
+How To Use
+In application scenarios, Fast Match module does not work independently. You may use it
+with Position Fixture , Condition Detection , Script , Measurement , etc. The Fast Match
+module locates targets, counts the number, and sends the data to its successor modules.
+Usage Example
+In the missing pin detection scenario, you can call the Fast Match module and other
+modules to detect if the physical interface missed one or more pins.
+The logic of the detection process is to check for bright spot presence in corresponding
+positions. When a pin is missing, its corresponding position will not have a bright spot in
+the image. Therefore, the procedure is as follows:
+● Fast Match: Match pin features.
+● Position Fixture : Avoid the impact of product position changes on detection .
+● Intensity Measurement : Measure the brightness value of the image within the ROI range.
+● Condition Detection : Judges whether the brightness value meets the requirements (OK)
+or does not meet the requirements (NG).
+● Format : Format OK and NG data.
+● Send Data : Send the formatted data.
+The workflow built with above modules is shown in the figure below.
+Vision Master Platform User Manual
+334
+
+=== PAGE 348 ===
+Figure 13-29 Example Workflow of Missed Pins Detection
+Table 13-3 Detection Effect
+Product Picture Detection Effect
+Parameter Configuration
+The following only introduces run parameters of this module. Configure them to define
+how the current module processes input data.
+Note
+● For more information on basic parameters, see Basic Parameters .
+● For more information on feature template parameters, see Fast Match Template
+Configuration Parameters in the topic.
+● For more information on result display parameters, see Result Show .
+Search All Mode
+Vision Master Platform User Manual
+335
+
+=== PAGE 349 ===
+When enabled, the target will be matched with all selected templates, and the module
+will output the most possible result. It is OFF by default.
+When the Contour Match module has this parameter enabled, you also need to set the
+NMS Overlap Threshold.
+NMS Overlap Threshold
+When different templates detect an overlap in the target, if the overlap threshold is
+lower than this value, then all targets are output; if the overlap threshold is higher
+than this value, only the target with the higher matching score is output.
+Note
+The calculation method for the overlap threshold is the 'area of the overlapping
+section between the two overlapping targets' divided by 'the total area of the two
+overlapping targets'.
+Min Match Score
+Set the similarity threshold for matching the target in the image with templates. The
+algorithm considers the target a valid match only when the similarity exceeds this
+threshold. The parameter can be set to a maximum of 1, indicating a complete contour
+point match between the template and the target. By default, the value is 0.5.
+Max Number to Find
+Set the maximum number of targets allowed to be found. The default value is 1, and the
+valid value range is 1~1000.
+Match Polarity
+Set the polarity to indicate the color transition from the edge of the graphic to the
+background (from dark to bright or from bright to dark).
+Set this parameter to Ignored to find targets having different polarity. Otherwise, set it to
+Considerd to shorten matching time.
+Angle Range
+Set the rotation tolerance for the template. The angle range is the range that the
+template can rotate in the horizontal direction (clockwise is positive, counterclockwise
+is negative) to match the target. The default value is -45~45, which means the rotation
+angle range is -45° to 45°.
+When searching for targets with rotation changes, this parameter needs to be set
+according to the rotation angle range of the target (value range -180~180), otherwise
+the matching may fail.
+Vision Master Platform User Manual
+336
+
+=== PAGE 350 ===
+Figure 13-30 Effect Example
+Scale Range
+Set the scaling range of the target relative to the created template. Set this parameter
+when searching for targets with scale scaling. The valid value range is 0.1~10.0.
+Note
+The default Scale Range is 1.00~1.00 (that is, only search targets without scaling).
+Therefore, when searching for a scaled target, be sure to adjust the value of this
+parameter according to the actual scaling degree, otherwise the matching will fail (as
+shown in the example below).
+Figure 13-31 Matching Failed (the target is scaled but the scale range is not adjusted)
+Vision Master Platform User Manual
+337
+
+=== PAGE 351 ===
+Figure 13-32 Matching Successful (scale range is adjusted according to target scaling)
+Overlap Threshold
+Set the maximum overlap ratio of the two matching boxes when a single template is set
+and multiple targets are detected, with two of the matching targets overlapping each
+other. The larger the value of this parameter, the greater the extent to which the two
+targets can overlap. The value range is 0~100, and the default is 50. When the overlap
+rate of two targets is greater than the set parameter value, the algorithm will discard the
+target with a lower similarity score and retain the target with a higher score.
+Figure 13-33 Effect example
+Sort
+Set the sorting basis for Current Result, when a single template is set and multiple
+targets are detected.
+The image below shows an example of sorting by score in descending order.
+Vision Master Platform User Manual
+338
+
+=== PAGE 352 ===
+Figure 13-34 Sort Example
+Score: High to Low
+Sort outputs by feature matching score in descending order.
+Angle: Big to Small
+Sort outputs by relative angle offset.
+X: Small to Big
+Sort outputs by the X-axis coordinate of the matching box center from small to large.
+Y: Small to Big
+Sort outputs by the Y-axis coordinate of the matching box center from small to large.
+X: Small to Big, Y: Small to Big.
+Sort outputs by the X-axis coordinate of the center point of the matching frame from
+small to large. If two targets have same integerized X-axis coordinate, sort them by
+the Y-axis coordinate from small to large.
+Y: Small to Big, X: Small to Big.
+Sort outputs by the Y-axis coordinate of the center point of the matching frame from
+small to large. If two targets have same integerized Y-axis coordinate, sort them by
+the X-axis coordinate from small to large.
+Threshold Type
+Auto Threshold
+Automatically generate edge contrast threshold parameters based on the target
+image for edge contour point extraction.
+Model Threshold
+After internal conversion, use the edge contrast threshold of the template as the edge
+contrast threshold in the matching stage to extract edge contour points.
+Manual Threshold
+Extract edge contour points with the set edge contrast threshold.
+Noise Considered
+Noise refer to feature points in the target that are not on the edge chain. When enabled,
+the algorithm will consider noise features. If there are burrs in the features, the score
+will be reduced. OFF by default.
+Vision Master Platform User Manual
+339
+
+=== PAGE 353 ===
+As shown in the figure below, whether noise is considered will affect the matching
+score. (Left: template, middle: include noise, right: exclude noise).
+Figure 13-35 Effect Example
+Extension Threshold
+The value of this parameter indicates "when the features of the target object are
+incompletely displayed at the edge of the image, the ratio of missing features to
+complete features." When the target object is cut off by the edge of the image, set this
+parameter to find the target.
+In the example below, the extension threshold is greater than 40, meaning it can find the
+target truncated by the image right edge.
+Figure 13-36 Effect Example
+Vision Master Platform User Manual
+340
+
+=== PAGE 354 ===
+Overtime Control
+Set the time threshold for each serach (ms). When the search time reaches the timeout
+threshold, the algorithm will stop searching and do not return search results. Value
+range: 0~10000, unit: ms. To set off the Timeout Control, set the value to 0.
+Contour Enabled
+Enable to display the template contour feature points.
+If not checked, the feature points will not be displayed and only the matching box will be
+displayed, which can reduce the matching time.
+Module Result
+The specific module result of Fast Match is as follows:
+Time (ms)
+Float. The module running time.
+Module Status
+Int. 0 indicates NG, with the module red; 1 indicates OK, with the module green.
+MatchStatus
+String. The number of "1" indicates the number of found objects in the image. If empty,
+it means there is no matching object.
+Example: "1;1;1;1;1", indicating that there are 5 matched objects.
+MatchNum
+Int. The number of objects in the image that are similar or identical to the model.
+MatchModelIndex
+Int. The index of matching model.
+MatchModelName
+String. The name of matching model.
+MatchRect
+The minimal rectangular box framing the matching object.
+MatchRectCenter
+MatchBoxCenterX
+Float. The X-coordinate of matching box center.
+MatchBoxCenterY
+Float. The Y-coordinate of matching box center.
+MatchBoxWidth
+Float. The width of matching box.
+MatchBoxHeight
+Vision Master Platform User Manual
+341
+
+=== PAGE 355 ===
+Float. The height of matching box.
+MatchBoxAngle
+Float. The angle that indicates the rotation of the longer side of the matching box to
+the horizon. The clockwise rotation denotes a positive angle and the
+counterclockwise rotation indicates a negative angle.
+Match Point
+MatchPointX
+Float. The X-coordinate of each match point.
+MatchPointY
+Float. The Y-coordinate of each match point.
+MatchScale
+Float. The proportional scaling factor of the matching object relative to the created
+template.
+MatchScore
+Float. The score (Similarity or NCC) of matched image, 1 indicating a perfect match.
+ROI
+The region of interest used for detection.
+DetectCenterPoint
+DetectCenterX
+Float. The X-coordinate of the center point of ROI.
+DetectCenterY
+Float. The Y-coordinate of the center point of ROI.
+DetectWidth
+Float. The width of ROI.
+DetectHeight
+Float. The height of ROI.
+DetectAngle
+Float. The rotation angle of the ROI is relative to the horizontal direction. A positive
+angle denotes a clockwise rotation, while a negative angle signifies a
+counterclockwise rotation.
+If ROI is in a positive position, the angle is 0 degree.
+MatchOutline
+Pointset. The point set information of the contour. The output result is not displayed.
+MatchOutlineNum
+Int. The number of contour points in the image that is the same or similar to the
+template.
+Vision Master Platform User Manual
+342
+
+=== PAGE 356 ===
+BlindPolygon
+The blind region excluded from detection.
+PolygonPointNum
+Int. The number of apexes of blind polygon.
+PolygonPoints
+PolygonPointsX
+Float. The X-coordinate of each apex of the blind polygon.
+PolygonPointsY
+Float. The Y-coordinate of each apex of the blind polygon.
+BlindPolygon
+String. The string information in blocked areas, which can be reused in subsequent
+modules.
+Output Mask
+OutMask
+Image. The mask image in binary image format is calculated based on ROI and the
+blind polygon.
+OutMaskWidth
+Int. The width of output mask image.
+OutMaskHeight
+Int. The height of output mask image.
+OutMaskPixelFormat
+Int. The pixel format of output mask image. Normally, in MONO8 (17301505).
+13.2.4 Gray Model Match
+The Gray Model Match module performs feature matching based on grayscale distribution.
+Since edge points are not used as features, the module applies to object positioning,
+object direction recognition, object angle detection and other detections where edge
+points are not obvious.
+Function Advantage
+Under scenarios where there is a change in the illumination condition or camera exposure
+time, the Gray Model Match can still match the target object, unlike other matching models
+based on contour point information, as shown in the image below.
+Vision Master Platform User Manual
+343
+
+=== PAGE 357 ===
+Table 13-4 Exposure Time Change
+Full Exposure Time Insufficient Exposure Time
+How To Use
+In the procedure, the Gray Model Match is generally used together with modules including:
+Position Fixture , Condition Detection , Script , modules under Measurement category, and
+other related modules. The Gray Model Match delivers information of object counting and
+position to these modules.
+Application Example
+In the following example, the Gray Model Match module is used to locate the packaging
+box and count the number of detected boxes. The Script module subscribes to the counted
+box number and uses the value in the corresponding script processing. Finally, with the
+Script module, the procedure sends the packaging box count to the communication device.
+Vision Master Platform User Manual
+344
+
+=== PAGE 358 ===
+Table 13-5 Example Of Gray Model Match Counting
+Match Effect Output Count Data
+Instead of High Precision Match and Fast Match, the example uses Gray Model Match
+because the packages have unobvious and inconsistent contours. There is a risk of
+missing or mismatch when using the High Precision Match or the Fast Match module this
+scenario.
+Parameter Configuration
+The following describes only run parameters of the module. By configuring these run
+parameters, you can define how the current module handles input data.
+Note
+● For more information on basic parameters, see Basic Parameters .
+● For more information on gray template parameters, see Gray Model Match Template
+Configuration Parameters in .
+● For more information on results display parameters, see Result Show .
+Search All Mode
+When enabled, the target will be matched with all selected templates, and the module
+will output the most possible result. It is OFF by default.
+When the Contour Match module has this parameter enabled, you also need to set the
+NMS Overlap Threshold.
+NMS Overlap Threshold
+Vision Master Platform User Manual
+345
+
+=== PAGE 359 ===
+When different templates detect an overlap in the target, if the overlap threshold is
+lower than this value, then all targets are output; if the overlap threshold is higher
+than this value, only the target with the higher matching score is output.
+Note
+The calculation method for the overlap threshold is the 'area of the overlapping
+section between the two overlapping targets' divided by 'the total area of the two
+overlapping targets'.
+Min Match Score
+Set the similarity threshold for matching the target in the image with templates. The
+algorithm considers the target a valid match only when the similarity exceeds this
+threshold. The parameter can be set to a maximum of 1, indicating a complete contour
+point match between the template and the target. By default, the value is 0.5.
+Max Number to Find
+Set the maximum number of targets allowed to be found. The default value is 1, and the
+valid value range is 1~1000.
+Angle Range
+Set the rotation tolerance for the template. The angle range is the range that the
+template can rotate in the horizontal direction (clockwise is positive, counterclockwise
+is negative) to match the target. The default value is -45~45, which means the rotation
+angle range is -45° to 45°.
+When searching for targets with rotation changes, this parameter needs to be set
+according to the rotation angle range of the target (value range -180~180), otherwise
+the matching may fail.
+Figure 13-37 Effect Example
+Overlap Threshold
+Set the maximum overlap ratio of the two matching boxes when a single template is set
+and multiple targets are detected, with two of the matching targets overlapping each
+other. The larger the value of this parameter, the greater the extent to which the two
+Vision Master Platform User Manual
+346
+
+=== PAGE 360 ===
+targets can overlap. The value range is 0~100, and the default is 50. When the overlap
+rate of two targets is greater than the set parameter value, the algorithm will discard the
+target with a lower similarity score and retain the target with a higher score.
+Figure 13-38 Effect example
+Sort
+Set the sorting basis for Current Result, when a single template is set and multiple
+targets are detected.
+The image below shows an example of sorting by score in descending order.
+Figure 13-39 Sort Example
+Score: High to Low
+Sort outputs by feature matching score in descending order.
+Angle: Big to Small
+Sort outputs by relative angle offset.
+X: Small to Big
+Sort outputs by the X-axis coordinate of the matching box center from small to large.
+Y: Small to Big
+Sort outputs by the Y-axis coordinate of the matching box center from small to large.
+X: Small to Big, Y: Small to Big.
+Sort outputs by the X-axis coordinate of the center point of the matching frame from
+small to large. If two targets have same integerized X-axis coordinate, sort them by
+the Y-axis coordinate from small to large.
+Y: Small to Big, X: Small to Big.
+Sort outputs by the Y-axis coordinate of the center point of the matching frame from
+small to large. If two targets have same integerized Y-axis coordinate, sort them by
+the X-axis coordinate from small to large.
+Vision Master Platform User Manual
+347
+
